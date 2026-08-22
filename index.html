@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lazy Leaf</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f0e6;
+color:#20251f;
+padding-bottom:90px;
+}
+
+header{
+background:linear-gradient(135deg,#0d3525,#1d6042);
+color:white;
+text-align:center;
+padding:28px 18px 25px;
+}
+
+.logo{
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+background:#e7d9b9;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:38px;
+}
+
+header h1{
+font-family:Georgia,serif;
+font-size:32px;
+margin:10px 0 5px;
+}
+
+header p{
+margin:0;
+color:#e8dcc3;
+}
+
+.lang{
+margin-top:15px;
+}
+
+.lang button{
+background:#e7d9b9;
+color:#123c2b;
+border:0;
+padding:8px 14px;
+border-radius:20px;
+font-weight:bold;
+}
+
+.container{
+max-width:650px;
+margin:auto;
+padding:15px;
+}
+
+.table-box{
+display:none;
+background:#dce9df;
+color:#123c2b;
+padding:13px;
+border-radius:13px;
+text-align:center;
+font-weight:bold;
+margin-bottom:12px;
+}
+
+.customer{
+background:white;
+padding:18px;
+border-radius:18px;
+box-shadow:0 4px 15px rgba(0,0,0,.08);
+margin-bottom:15px;
+}
+
+.customer label{
+display:block;
+font-weight:bold;
+margin:10px 0 6px;
+}
+
+.customer input,
+.customer select,
+.customer textarea{
+width:100%;
+padding:12px;
+border:1px solid #ddd4c3;
+border-radius:10px;
+font-size:15px;
+font-family:inherit;
+}
+
+.customer textarea{
+height:80px;
+resize:none;
+}
+
+.search{
+position:relative;
+margin-bottom:15px;
+}
+
+.search input{
+width:100%;
+padding:15px 45px 15px 17px;
+border:0;
+border-radius:14px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+font-size:16px;
+}
+
+.search span{
+position:absolute;
+right:16px;
+top:14px;
+font-size:20px;
+}
+
+.categories{
+display:flex;
+gap:8px;
+overflow-x:auto;
+padding-bottom:12px;
+}
+
+.categories button{
+white-space:nowrap;
+border:0;
+background:white;
+color:#174b35;
+padding:10px 16px;
+border-radius:22px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+font-weight:bold;
+}
+
+.categories button.active{
+background:#174b35;
+color:white;
+}
+
+.title{
+font-family:Georgia,serif;
+font-size:25px;
+color:#123c2b;
+margin:8px 0 15px;
+}
+
+.item{
+background:#fffdf8;
+padding:18px;
+border-radius:18px;
+margin-bottom:15px;
+box-shadow:0 5px 18px rgba(0,0,0,.08);
+border:1px solid #eee5d5;
+}
+
+.food-icon{
+height:120px;
+border-radius:14px;
+background:linear-gradient(135deg,#e8e0cf,#f8f4eb);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:65px;
+margin-bottom:14px;
+}
+
+.item h2{
+font-family:Georgia,serif;
+color:#123c2b;
+margin:0 0 6px;
+}
+
+.desc{
+font-size:13px;
+color:#777;
+margin-bottom:10px;
+}
+
+.price{
+font-size:20px;
+font-weight:bold;
+color:#a47727;
+margin-bottom:12px;
+}
+
+.add{
+width:100%;
+padding:13px;
+border:0;
+border-radius:11px;
+background:#174b35;
+color:white;
+font-size:15px;
+font-weight:bold;
+}
+
+.no-result{
+display:none;
+text-align:center;
+padding:30px;
+color:#777;
+}
+
+.sticky-cart{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:10px 14px;
+box-shadow:0 -4px 18px rgba(0,0,0,.15);
+z-index:100;
+}
+
+.cart-bar{
+max-width:650px;
+margin:auto;
+background:#123c2b;
+color:white;
+padding:14px 17px;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.cart-info{
+font-weight:bold;
+}
+
+.view-cart{
+background:#e7d9b9;
+color:#123c2b;
+border:0;
+padding:10px 15px;
+border-radius:9px;
+font-weight:bold;
+}
+
+.overlay{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+z-index:200;
+align-items:flex-end;
+}
+
+.cart-modal{
+background:#fffdf8;
+width:100%;
+max-height:85vh;
+overflow:auto;
+border-radius:22px 22px 0 0;
+padding:22px;
+}
+
+.cart-modal-inner{
+max-width:650px;
+margin:auto;
+}
+
+.cart-head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.close{
+border:0;
+background:#eee;
+border-radius:50%;
+width:38px;
+height:38px;
+font-size:20px;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:13px 0;
+border-bottom:1px solid #ddd;
+}
+
+.qty button{
+border:0;
+background:#174b35;
+color:white;
+border-radius:6px;
+padding:6px 10px;
+}
+
+.total{
+font-size:23px;
+font-weight:bold;
+color:#174b35;
+margin:18px 0;
+}
+
+.whatsapp{
+width:100%;
+border:0;
+background:#25D366;
+color:white;
+padding:15px;
+border-radius:11px;
+font-size:17px;
+font-weight:bold;
+}
+
+footer{
+background:#0d2d21;
+color:#d8ceb9;
+text-align:center;
+padding:25px;
+font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">🌿</div>
+
+<h1>The Lazy Leaf</h1>
+
+<p>Fresh Taste • Cozy Moments • Great Food</p>
+
+<div class="lang">
+<button onclick="setLanguage('en')">English</button>
+<button onclick="setLanguage('hi')">हिंदी</button>
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div id="tableBox" class="table-box">
+🪑 <span id="tableText">Your Table</span>
+</div>
+
+
+<div class="customer">
+
+<label id="nameLabel">👤 Customer Name</label>
+
+<input
+id="customerName"
+type="text"
+placeholder="Enter your name"
+>
+
+<label id="tableLabel">🪑 Table Number</label>
+
+<select id="tableNumber">
+
+<option value="">Select Table</option>
+<option value="1">Table 1</option>
+<option value="2">Table 2</option>
+<option value="3">Table 3</option>
+<option value="4">Table 4</option>
+<option value="5">Table 5</option>
+<option value="6">Table 6</option>
+<option value="7">Table 7</option>
+<option value="8">Table 8</option>
+<option value="9">Table 9</option>
+<option value="10">Table 10</option>
+
+</select>
+
+<label id="noteLabel">📝 Special Note</label>
+
+<textarea
+id="customerNote"
+placeholder="Any special instructions?"
+></textarea>
+
+</div>
+
+
+<div class="search">
+
+<input
+id="searchInput"
+type="text"
+placeholder="🔍 Search menu..."
+oninput="searchMenu()"
+>
+
+<span>🔍</span>
+
+</div>
+
+
+<div class="categories">
+
+<button class="active" onclick="filterCategory('all',this)">
+🍽️ All
+</button>
+
+<button onclick="filterCategory('food',this)">
+🍚 Food
+</button>
+
+<button onclick="filterCategory('coffee',this)">
+☕ Coffee
+</button>
+
+<button onclick="filterCategory('tea',this)">
+🍵 Tea
+</button>
+
+<button onclick="filterCategory('dessert',this)">
+🍫 Dessert
+</button>
+
+</div>
+
+
+<h2 class="title" id="menuTitle">Our Menu</h2>
+
+
+<div id="menu">
+
+
+<!-- RICE -->
+
+<div class="item"
+data-category="food"
+data-name="rice">
+
+<div class="food-icon">🍚</div>
+
+<h2>Rice</h2>
+
+<div class="desc">
+Freshly prepared delicious rice
+</div>
+
+<div class="price">₹45</div>
+
+<button class="add"
+onclick="addToCart('Rice',45)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- COLD COFFEE -->
+
+<div class="item"
+data-category="coffee"
+data-name="cold coffee">
+
+<div class="food-icon">🧊☕</div>
+
+<h2>Cold Coffee</h2>
+
+<div class="desc">
+Creamy chilled coffee
+</div>
+
+<div class="price">₹45</div>
+
+<button class="add"
+onclick="addToCart('Cold Coffee',45)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- HOT COFFEE -->
+
+<div class="item"
+data-category="coffee"
+data-name="hot coffee">
+
+<div class="food-icon">☕</div>
+
+<h2>Hot Coffee</h2>
+
+<div class="desc">
+Fresh hot brewed coffee
+</div>
+
+<div class="price">₹34</div>
+
+<button class="add"
+onclick="addToCart('Hot Coffee',34)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- COLD COFFEE ICE CREAM -->
+
+<div class="item"
+data-category="coffee"
+data-name="cold coffee with ice cream">
+
+<div class="food-icon">🍨☕</div>
+
+<h2>Cold Coffee with Ice Cream</h2>
+
+<div class="desc">
+Cold coffee topped with creamy ice cream
+</div>
+
+<div class="price">₹75</div>
+
+<button class="add"
+onclick="addToCart('Cold Coffee with Ice Cream',75)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- COLD COFFEE CHOCOLATE -->
+
+<div class="item"
+data-category="coffee"
+data-name="cold coffee with chocolate">
+
+<div class="food-icon">🍫☕</div>
+
+<h2>Cold Coffee with Chocolate</h2>
+
+<div class="desc">
+Chilled coffee with rich chocolate
+</div>
+
+<div class="price">₹56</div>
+
+<button class="add"
+onclick="addToCart('Cold Coffee with Chocolate',56)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- TEA -->
+
+<div class="item"
+data-category="tea"
+data-name="tea">
+
+<div class="food-icon">🍵</div>
+
+<h2>Tea</h2>
+
+<div class="desc">
+Fresh hot tea
+</div>
+
+<div class="price">₹34</div>
+
+<button class="add"
+onclick="addToCart('Tea',34)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- HOT CHOCOLATE -->
+
+<div class="item"
+data-category="dessert"
+data-name="hot chocolate">
+
+<div class="food-icon">🍫</div>
+
+<h2>Hot Chocolate</h2>
+
+<div class="desc">
+Rich and creamy chocolate
+</div>
+
+<div class="price">₹34</div>
+
+<button class="add"
+onclick="addToCart('Hot Chocolate',34)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+<!-- BIRYANI -->
+
+<div class="item"
+data-category="food"
+data-name="chicken biryani">
+
+<div class="food-icon">🍗</div>
+
+<h2>Chicken Biryani</h2>
+
+<div class="desc">
+Aromatic chicken biryani
+</div>
+
+<div class="price">₹45</div>
+
+<button class="add"
+onclick="addToCart('Chicken Biryani',45)">
+🛒 Add to Cart
+</button>
+
+</div>
+
+
+</div>
+
+
+<div id="noResult" class="no-result">
+No item found.
+</div>
+
+</div>
+
+
+<!-- STICKY CART -->
+
+<div class="sticky-cart">
+
+<div class="cart-bar">
+
+<div class="cart-info">
+
+🛒 <span id="cartCount">0</span> Items
+<br>
+₹<span id="barTotal">0</span>
+
+</div>
+
+<button class="view-cart"
+onclick="openCart()">
+
+View Cart
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- CART -->
+
+<div id="overlay"
+class="overlay"
+onclick="closeOutside(event)">
+
+<div class="cart-modal">
+
+<div class="cart-modal-inner">
+
+<div class="cart-head">
+
+<h2>🛒 Your Order</h2>
+
+<button class="close"
+onclick="closeCart()">
+
+×
+
+</button>
+
+</div>
+
+
+<div id="cartItems">
+
+<p>Cart is empty</p>
+
+</div>
+
+
+<div class="total">
+
+Total: ₹<span id="total">0</span>
+
+</div>
+
+
+<button class="whatsapp"
+onclick="sendOrder()">
+
+📲 Place Order on WhatsApp
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+
+🌿 The Lazy Leaf
+
+<br><br>
+
+Thank you for visiting us ❤️
+
+</footer>
+
+
+<script>
+
+let cart=[];
+let currentLanguage="en";
+
+
+/* QR TABLE */
+
+const params=
+new URLSearchParams(window.location.search);
+
+const qrTable=
+params.get("table");
+
+if(qrTable){
+
+document.getElementById("tableNumber").value=qrTable;
+
+document.getElementById("tableNumber").disabled=true;
+
+document.getElementById("tableBox").style.display="block";
+
+document.getElementById("tableText").innerText=
+"Your Table: Table "+qrTable;
+
+}
+
+
+/* ADD TO CART */
+
+function addToCart(name,price){
+
+let existing=
+cart.find(item=>item.name===name);
+
+if(existing){
+
+existing.qty++;
+
+}else{
+
+cart.push({
+name:name,
+price:price,
+qty:1
+});
+
+}
+
+showCart();
+
+}
+
+
+/* QUANTITY */
+
+function changeQty(name,change){
+
+let item=
+cart.find(item=>item.name===name);
+
+if(!item)return;
+
+item.qty+=change;
+
+if(item.qty<=0){
+
+cart=
+cart.filter(item=>item.name!==name);
+
+}
+
+showCart();
+
+}
+
+
+/* CART */
+
+function showCart(){
+
+let box=
+document.getElementById("cartItems");
+
+let totalBox=
+document.getElementById("total");
+
+let countBox=
+document.getElementById("cartCount");
+
+let barTotal=
+document.getElementById("barTotal");
+
+box.innerHTML="";
+
+let total=0;
+let count=0;
+
+
+if(cart.length===0){
+
+box.innerHTML=
+"<p>Cart is empty</p>";
+
+}else{
+
+cart.forEach(item=>{
+
+let itemTotal=
+item.price*item.qty;
+
+total+=itemTotal;
+
+count+=item.qty;
+
+
+box.innerHTML+=`
+
+<div class="cart-item">
+
+<div>
+
+<b>${item.name}</b>
+
+<br>
+
+₹${item.price} × ${item.qty}
+
+</div>
+
+<div class="qty">
+
+<button
+onclick="changeQty('${item.name}',-1)">
+−
+</button>
+
+${item.qty}
+
+<button
+onclick="changeQty('${item.name}',1)">
++
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+totalBox.innerText=total;
+
+countBox.innerText=count;
+
+barTotal.innerText=total;
+
+}
+
+
+/* OPEN CART */
+
+function openCart(){
+
+document.getElementById("overlay")
+.style.display="flex";
+
+}
+
+
+/* CLOSE CART */
+
+function closeCart(){
+
+document.getElementById("overlay")
+.style.display="none";
+
+}
+
+
+function closeOutside(e){
+
+if(e.target.id==="overlay"){
+
+closeCart();
+
+}
+
+}
+
+
+/* SEARCH */
+
+function searchMenu(){
+
+let text=
+document.getElementById("searchInput")
+.value.toLowerCase();
+
+let items=
+document.querySelectorAll(".item");
+
+let found=0;
+
+
+items.forEach(item=>{
+
+let name=
+item.dataset.name.toLowerCase();
+
+if(name.includes(text)){
+
+item.style.display="block";
+
+found++;
+
+}else{
+
+item.style.display="none";
+
+}
+
+});
+
+
+document.getElementById("noResult")
+.style.display=
+found===0?"block":"none";
+
+}
+
+
+/* CATEGORY */
+
+function filterCategory(category,button){
+
+document
+.querySelectorAll(".categories button")
+.forEach(btn=>
+btn.classList.remove("active")
+);
+
+button.classList.add("active");
+
+
+let items=
+document.querySelectorAll(".item");
+
+let found=0;
+
+
+items.forEach(item=>{
+
+if(category==="all" ||
+item.dataset.category===category){
+
+item.style.display="block";
+
+found++;
+
+}else{
+
+item.style.display="none";
+
+}
+
+});
+
+
+document.getElementById("noResult")
+.style.display=
+found===0?"block":"none";
+
+document.getElementById("searchInput")
+.value="";
+
+}
+
+
+/* LANGUAGE */
+
+function setLanguage(lang){
+
+currentLanguage=lang;
+
+
+if(lang==="hi"){
+
+document.getElementById("nameLabel")
+.innerText=
+"👤 ग्राहक का नाम";
+
+document.getElementById("tableLabel")
+.innerText=
+"🪑 टेबल नंबर";
+
+document.getElementById("noteLabel")
+.innerText=
+"📝 विशेष निर्देश";
+
+document.getElementById("searchInput")
+.placeholder=
+"🔍 मेन्यू खोजें...";
+
+document.getElementById("menuTitle")
+.innerText=
+"हमारा मेन्यू";
+
+}else{
+
+document.getElementById("nameLabel")
+.innerText=
+"👤 Customer Name";
+
+document.getElementById("tableLabel")
+.innerText=
+"🪑 Table Number";
+
+document.getElementById("noteLabel")
+.innerText=
+"📝 Special Note";
+
+document.getElementById("searchInput")
+.placeholder=
+"🔍 Search menu...";
+
+document.getElementById("menuTitle")
+.innerText=
+"Our Menu";
+
+}
+
+}
+
+
+/* WHATSAPP */
+
+function sendOrder(){
+
+let name=
+document.getElementById("customerName")
+.value.trim();
+
+let table=
+document.getElementById("tableNumber")
+.value;
+
+let note=
+document.getElementById("customerNote")
+.value.trim();
+
+
+if(name===""){
+
+alert("Please enter your name.");
+
+return;
+
+}
+
+
+if(table===""){
+
+alert("Please select your table number.");
+
+return;
+
+}
+
+
+if(cart.length===0){
+
+alert("Please add an item to your cart first.");
+
+return;
+
+}
+
+
+let message=
+"🌿 THE LAZY LEAF%0A"+
+"━━━━━━━━━━━━━━━━%0A"+
+"🧾 NEW ORDER%0A%0A";
+
+
+message+=
+"👤 Customer: "+
+encodeURIComponent(name)+
+"%0A";
+
+
+message+=
+"🪑 Table: "+
+encodeURIComponent(table)+
+"%0A%0A";
+
+
+message+=
+"🍽️ ORDER DETAILS%0A";
+
+
+let total=0;
+
+
+cart.forEach(item=>{
+
+let itemTotal=
+item.price*item.qty;
+
+total+=itemTotal;
+
+
+message+=
+"• "+
+encodeURIComponent(item.name)+
+" × "+
+item.qty+
+" = ₹"+
+itemTotal+
+"%0A";
+
+});
+
+
+message+=
+"%0A━━━━━━━━━━━━━━━━%0A";
+
+message+=
+"💰 TOTAL: ₹"+
+total+
+"%0A";
+
+
+if(note!==""){
+
+message+=
+"📝 Note: "+
+encodeURIComponent(note)+
+"%0A";
+
+}
+
+
+message+=
+"━━━━━━━━━━━━━━━━%0A%0A"+
+"📲 Please confirm my order.";
+
+
+let phone=
+"918504950489";
+
+
+window.open(
+"https://wa.me/"+
+phone+
+"?text="+
+message,
+"_blank"
+);
+
+
+}
+
+
+/* START */
+
+showCart();
+
+</script>
+
+</body>
+</html>
+
+अब Coffee button दबाने पर सिर्फ ये 4 coffee items दिखेंगे:
+
+☕ Cold Coffee — ₹45
+☕ Hot Coffee — ₹34
+🍨 Cold Coffee with Ice Cream — ₹75
+🍫 Cold Coffee with Chocolate — ₹56
+
+और All दबाने पर पूरा menu वापस आ जाएगा.
