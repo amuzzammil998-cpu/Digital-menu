@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lazy Leaf - Digital Menu</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6f4;
+  color:#222;
+}
+
+header{
+  background:#174d32;
+  color:white;
+  text-align:center;
+  padding:25px 15px;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin:8px 0 0;
+}
+
+.form,.cart{
+  background:white;
+  margin:15px auto;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+  max-width:600px;
+}
+
+.form label{
+  display:block;
+  font-weight:bold;
+  margin-top:12px;
+  margin-bottom:6px;
+}
+
+.form input,.form select{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:16px;
+}
+
+.table-box{
+  background:#e8f5e9;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  font-weight:bold;
+  color:#174d32;
+}
+
+.menu{
+  padding:15px;
+  max-width:600px;
+  margin:auto;
+}
+
+.item{
+  background:white;
+  margin-bottom:15px;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.item h2{
+  margin:0 0 8px;
+}
+
+.price{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  background:#174d32;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.cart h2{
+  margin-top:0;
+}
+
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:12px 0;
+  padding-bottom:10px;
+  border-bottom:1px solid #ddd;
+}
+
+.qty button{
+  padding:6px 10px;
+  margin:0 3px;
+}
+
+.total{
+  font-size:20px;
+  font-weight:bold;
+  margin:15px 0;
+}
+
+.whatsapp{
+  width:100%;
+  background:#25D366;
+  font-size:17px;
+  padding:14px;
+}
+
+.empty{
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌿 The Lazy Leaf</h1>
+<p>Digital Menu & Online Ordering</p>
+</header>
+
+<div class="form">
+
+<div id="qrTableBox" class="table-box" style="display:none;">
+🪑 Your Table: <span id="qrTableNumber"></span>
+</div>
+
+<label>Customer Name</label>
+<input type="text" id="customerName" placeholder="Enter your name">
+
+<label>Table Number</label>
+<select id="tableNumber">
+<option value="">Select Table</option>
+<option value="1">Table 1</option>
+<option value="2">Table 2</option>
+<option value="3">Table 3</option>
+<option value="4">Table 4</option>
+<option value="5">Table 5</option>
+<option value="6">Table 6</option>
+<option value="7">Table 7</option>
+<option value="8">Table 8</option>
+<option value="9">Table 9</option>
+<option value="10">Table 10</option>
+</select>
+
+</div>
+
+<div class="menu">
+
+<div class="item">
+<h2>🍚 Rice</h2>
+<div class="price">₹45</div>
+<button onclick="addToCart('Rice',45)">🛒 Add to Cart</button>
+</div>
+
+<div class="item">
+<h2>☕ Cold Coffee</h2>
+<div class="price">₹45</div>
+<button onclick="addToCart('Cold Coffee',45)">🛒 Add to Cart</button>
+</div>
+
+<div class="item">
+<h2>🍵 Tea</h2>
+<div class="price">₹34</div>
+<button onclick="addToCart('Tea',34)">🛒 Add to Cart</button>
+</div>
+
+<div class="item">
+<h2>🍫 Hot Chocolate</h2>
+<div class="price">₹34</div>
+<button onclick="addToCart('Hot Chocolate',34)">🛒 Add to Cart</button>
+</div>
+
+<div class="item">
+<h2>🍗 Chicken Biryani</h2>
+<div class="price">₹45</div>
+<button onclick="addToCart('Chicken Biryani',45)">🛒 Add to Cart</button>
+</div>
+
+</div>
+
+<div class="cart">
+
+<h2>🛒 Your Order</h2>
+
+<div id="cartItems">
+<p class="empty">Cart is empty</p>
+</div>
+
+<div class="total">
+Total: ₹<span id="total">0</span>
+</div>
+
+<button class="whatsapp" onclick="sendOrder()">
+📲 Order on WhatsApp
+</button>
+
+</div>
+
+<script>
+
+let cart=[];
+
+/* QR SE TABLE NUMBER AUTOMATIC */
+const urlParams = new URLSearchParams(window.location.search);
+const qrTable = urlParams.get("table");
+
+if(qrTable){
+
+  const tableSelect = document.getElementById("tableNumber");
+  const tableBox = document.getElementById("qrTableBox");
+  const tableText = document.getElementById("qrTableNumber");
+
+  tableSelect.value = qrTable;
+  tableSelect.disabled = true;
+
+  tableBox.style.display = "block";
+  tableText.innerText = "Table " + qrTable;
+}
+
+
+/* ADD TO CART */
+function addToCart(name,price){
+
+  let existing=cart.find(item=>item.name===name);
+
+  if(existing){
+    existing.qty++;
+  }else{
+    cart.push({
+      name:name,
+      price:price,
+      qty:1
+    });
+  }
+
+  showCart();
+}
+
+
+/* CHANGE QUANTITY */
+function changeQty(name,change){
+
+  let item=cart.find(item=>item.name===name);
+
+  if(!item)return;
+
+  item.qty+=change;
+
+  if(item.qty<=0){
+    cart=cart.filter(item=>item.name!==name);
+  }
+
+  showCart();
+}
+
+
+/* SHOW CART */
+function showCart(){
+
+  let cartBox=document.getElementById("cartItems");
+  let totalBox=document.getElementById("total");
+
+  cartBox.innerHTML="";
+
+  if(cart.length===0){
+
+    cartBox.innerHTML='<p class="empty">Cart is empty</p>';
+    totalBox.innerText="0";
+    return;
+
+  }
+
+  let total=0;
+
+  cart.forEach(item=>{
+
+    let itemTotal=item.price*item.qty;
+
+    total+=itemTotal;
+
+    cartBox.innerHTML+=`
+
+    <div class="cart-item">
+
+      <div>
+        <b>${item.name}</b><br>
+        ₹${item.price} × ${item.qty}
+      </div>
+
+      <div class="qty">
+
+        <button onclick="changeQty('${item.name}',-1)">−</button>
+
+        ${item.qty}
+
+        <button onclick="changeQty('${item.name}',1)">+</button>
+
+      </div>
+
+    </div>
+
+    `;
+
+  });
+
+  totalBox.innerText=total;
+}
+
+
+/* WHATSAPP ORDER */
+function sendOrder(){
+
+  let name=document.getElementById("customerName").value.trim();
+  let table=document.getElementById("tableNumber").value;
+
+  if(name===""){
+    alert("Please enter your name.");
+    return;
+  }
+
+  if(table===""){
+    alert("Please select your table number.");
+    return;
+  }
+
+  if(cart.length===0){
+    alert("Please add an item to your cart first.");
+    return;
+  }
+
+  let message =
+    "Hello The Lazy Leaf!%0A%0A";
+
+  message +=
+    "👤 Customer: " +
+    encodeURIComponent(name) +
+    "%0A";
+
+  message +=
+    "🪑 Table: " +
+    encodeURIComponent(table) +
+    "%0A%0A";
+
+  message +=
+    "🛒 Order:%0A";
+
+  let total=0;
+
+  cart.forEach(item=>{
+
+    let itemTotal=item.price*item.qty;
+
+    total+=itemTotal;
+
+    message +=
+      encodeURIComponent(item.name) +
+      " × " +
+      item.qty +
+      " = ₹" +
+      itemTotal +
+      "%0A";
+
+  });
+
+  message +=
+    "%0A💰 Total: ₹" +
+    total;
+
+  message +=
+    "%0A%0APlease confirm my order.";
+
+  let phone="918504950489";
+
+  window.open(
+    "https://wa.me/" +
+    phone +
+    "?text=" +
+    message,
+    "_blank"
+  );
+
+}
+
+</script>
+
+</body>
+</html>
